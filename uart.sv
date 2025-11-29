@@ -23,7 +23,7 @@ module uart #(
   // receiving
   logic rx_en, rx_rst, rx_count, 
         rx_count_up, rx_count_clr;
-        
+
   rx_datapath rx_dp (.*);
   rx_control rx_c (.*);
 
@@ -31,10 +31,12 @@ endmodule: uart
 
 module rx_control
   (input  logic rx, clock, rst,
+   input  logic [3:0] rx_count,
    output logic rx_en, rx_valid, rx_rst
+                rx_count_up, rx_count_clr
   );
 
-  enum logic [1:0] {}
+  enum logic [1:0] {};
 
   // states
   // 1. Waiting for start bit,
