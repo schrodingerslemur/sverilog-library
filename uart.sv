@@ -21,9 +21,10 @@ module uart #(
   // 8 data bits, no parity, 1 stop bit
 
   // receiving
-  logic rx_en, rx_rst;
+  logic rx_en, rx_rst, rx_count, 
+        rx_count_up, rx_count_clr;
+        
   rx_datapath rx_dp (.*);
-
   rx_control rx_c (.*);
 
 endmodule: uart
@@ -37,15 +38,21 @@ module rx_control
 
   // states
   // 1. Waiting for start bit,
-  // 2. read 8 
+  // 2. read 8 times
+
 endmodule: rx_control
 
 module rx_datapath
   (input  logic rx_en, rx,
-                clock, rx_rst,
-   output logic [7:0] rx_data);
+                rx_rst,
+                rx_count_up,
+                rx_count_clr,
+                clock,
+   output logic [7:0] rx_data,
+   output logic [3:0] rx_count);
 
   // 1 if MSB first, 0 if LSB first
+  logic left;
   assign left = 1'b0; // change if required
 
   ShiftRegisterSIPO data #(8) (
@@ -54,7 +61,20 @@ module rx_datapath
     .Q(rx_data),
     .left,
     .clock,
-    .rx_rst
+    .reset(rx_rst)
+  );
+
+  logic up, load;
+  assign {up, load} = {1'b1, 1'b0};
+
+  Counter count #(4) (
+    .en(rx_count_up),
+    .clear(rx_count_clr),
+    .up,
+    .load,
+    .clock,
+    .D(),
+    .Q(rx_count)
   );
 
 endmodule: rx_datapath
