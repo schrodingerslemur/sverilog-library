@@ -188,9 +188,14 @@ module rx_control
           cPts = {NO_RX, INC_CLK, NO_SMP, NO_DATA, INVALID};
         end
       end
-
     endcase
   end
+
+  always_ff @(posedge clock)
+    if (reset)
+      state <= IDLE;
+    else 
+      state <= nextState;
 
 endmodule: rx_control
 
