@@ -1,2 +1,8 @@
 # Verilator files
 obj_dir/
+
+# Bash files
+*.sh
+
+# Ref files
+chat*
