@@ -7,8 +7,8 @@ typedef enum logic [1:0] {
 
 typedef enum logic [1:0] {
   SHIFT = 2'b10,
-  CLR   = 2'b01,
-  NO    = 2'b00
+  RST   = 2'b01,
+  NONE  = 2'b00
 } shift_t;
 
 typedef struct packed {

@@ -31,7 +31,16 @@ module uart_rx #(
   // Data ---
   logic [$clog2(DATA_WIDTH)-1:0] bit_count;
 
-  rx_datapath #(.*) (
+  // Control points
+  controlPoints_t cPts;
+
+  rx_datapath #(
+    .CLK_FREQ(CLK_FREQ),
+    .BAUD_RATE(BAUD_RATE),
+    .DATA_WIDTH(DATA_WIDTH),
+    .OVERSAMPLE(OVERSAMPLE)
+  ) dp
+  (
     .data_in(rx),
     .data_out(rx_data),
     .*
