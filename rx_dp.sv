@@ -74,14 +74,14 @@ module rx_datapath #(
   ); 
 
   // Logic for sample and mid_bit
-localparam int CLK_CNT_W    = $clog2(CLKS_PER_SAMPLE);
-localparam int SAMPLE_CNT_W = $clog2(OVERSAMPLE);
+  localparam int CLK_CNT_W    = $clog2(CLKS_PER_SAMPLE);
+  localparam int SAMPLE_CNT_W = $clog2(OVERSAMPLE);
 
-assign sample =
-    (clk_count == CLK_CNT_W'((CLKS_PER_SAMPLE - 1)));
+  assign sample =
+      (clk_count == CLK_CNT_W'((CLKS_PER_SAMPLE - 1)));
 
-assign mid_bit =
-    (sample_count == SAMPLE_CNT_W'((OVERSAMPLE/2) - 1));
+  assign mid_bit =
+      (sample_count == SAMPLE_CNT_W'((OVERSAMPLE/2) - 1));
 
 
 endmodule: rx_datapath
