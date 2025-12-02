@@ -69,7 +69,7 @@ module rx_fsm (
         rx_valid = 0;
         cPts.bit_ctrl = CLR;
         cPts.data_ctrl = RST;
-        
+
         if (mid_bit) begin
           cPts.clk_ctrl = CLR;
           cPts.sample_ctrl = CLR;
@@ -93,18 +93,30 @@ module rx_fsm (
         rx_valid = 0;
 
         if (done) begin
+          cPts.clk_ctrl = CLR;
+          cPts.sample_ctrl = CLR;
           cPts.bit_ctrl = NO;
           cPts.data_ctrl = NONE;
           nextState = STOP;
         end
 
-        else if (mid_bit) begin
-          cPts.bit_ctrl = INC;
-          cPts.data_ctrl = SHIFT;
+        else if (sample) begin
+          if (mid_bit) begin
+            cPts.bit_ctrl = INC;
+            cPts.data_ctrl = SHIFT;
+          end
+          else begin
+            cPts.bit_ctrl = NO;
+            cPts.data_ctrl = NONE;
+          end
+          cPts.clk_ctrl = CLR;
+          cPts.sample_ctrl = INC;
           nextState = DATA;
         end
 
         else begin
+          cPts.clk_ctrl = INC;
+          cPts.sample_ctrl = NO;
           cPts.bit_ctrl = NO;
           cPts.data_ctrl = NONE;
           nextState = DATA;
@@ -112,22 +124,53 @@ module rx_fsm (
       end
 
       STOP: begin
-        receiving = 1;
         if (mid_bit) begin
           if (rx == 1'b1) begin
             rx_valid = 1;
+            cPts.clk_ctrl = CLR;
+            cPts.sample_ctrl = CLR;
+            cPts.bit_ctrl = CLR;
+            cPts.data_ctrl = NONE;
             nextState = IDLE;
           end
           else begin
             rx_valid = 0;
+            cPts.clk_ctrl = CLR;
+            cPts.sample_ctrl = CLR;
+            cPts.bit_ctrl = CLR;
+            cPts.data_ctrl = NONE;
             nextState = IDLE;
           end
         end
+
+        else if (sample) begin
+          cPts.clk_ctrl = CLR;
+          cPts.sample_ctrl = INC;
+          cPts.bit_ctrl = NO;
+          cPts.data_ctrl = NONE;
+          rx_valid = 0;
+          nextState = STOP;
+        end
+
         else begin
+          cPts.clk_ctrl = INC;
+          cPts.sample_ctrl = NO;
+          cPts.bit_ctrl = NO;
+          cPts.data_ctrl = NONE;
           rx_valid = 0;
           nextState = STOP;
         end
       end
+    
+      default: begin
+        rx_valid = 0;
+        cPts.bit_ctrl = CLR;
+        cPts.data_ctrl = RST;
+        cPts.clk_ctrl = CLR;
+        cPts.sample_ctrl = CLR;
+        nextState = IDLE;
+      end
+      
     endcase
   end
 
