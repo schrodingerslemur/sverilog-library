@@ -1,40 +1,141 @@
-module rx_fsm ();
+module rx_fsm (
+  input  logic clock, reset,
+  input  logic rx,
+  input  logic sample, mid_bit, full_bit, done,
+  output controlPoints_t cPts,
+  output logic rx_valid
+);
 
-  enum logic [1:0] {
-    IDLE, START, DATA, STOP
+  enum logic [2:0] {
+    IDLE, START, START_BUF, DATA, STOP
   } state, nextState;
 
   logic receiving;
 
   // Control points: cPts, receiving
-  // Status points: sample, mid_bit
+  // Status points: sample, mid_bit, full_bit, done
   
-  // FSM for clk_count and sample_count
-  always_ff @(posedge clock, posedge reset) begin
-    if (reset) begin
-      cPts.clk_ctrl <= CLR;
-      cPts.sample_ctrl <= CLR;
-    end
+  always_comb begin
+    case (state)
+      IDLE: begin
+        rx_valid = 0;
+        cPts.bit_ctrl = CLR;
+        cPts.data_ctrl = RST;
+        cPts.clk_ctrl = CLR;
+        cPts.sample_ctrl = CLR;
 
-    else if (receiving) begin
-      if (clk_count == CLKS_PER_SAMPLE - 1) begin
-        cPts.clk_ctrl <= CLR;
-        cPts.sample_ctrl <= INC;
+        if (rx == 1'b0) begin
+          nextState = START;
+        end
+        else begin
+          nextState = IDLE;
+        end
       end
-      else if (sample_count == OVERSAMPLE - 1) begin
-        cPts.clk_ctrl <= CLR;
-        cPts.sample_ctrl <= CLR;
-      end
-    end
 
-    else begin
-      cPts.clk_ctrl <= INC;
-      cPts.sample_ctrl <= NO;
-    end
+      START: begin
+        rx_valid = 0;
+        cPts.bit_ctrl = CLR;
+        cPts.data_ctrl = RST;
+
+        if (mid_bit) begin
+          if (rx == 0) begin
+            cPts.clk_ctrl = CLR;
+            cPts.sample_ctrl = CLR;
+            nextState = DATA;
+          end
+          else begin
+            cPts.clk_ctrl = CLR;
+            cPts.sample_ctrl = CLR;
+            nextState = IDLE;
+          end
+        end
+
+        else if (sample) begin
+          cPts.clk_ctrl = CLR;
+          cPts.sample_ctrl = INC;
+
+          nextState = START;
+        end
+
+        else begin
+          cPts.clk_ctrl = INC;
+          cPts.sample_ctrl = NO;
+
+          nextState = START;
+        end
+      end
+
+      START_BUF: begin
+        rx_valid = 0;
+        cPts.bit_ctrl = CLR;
+        cPts.data_ctrl = RST;
+        
+        if (mid_bit) begin
+          cPts.clk_ctrl = CLR;
+          cPts.sample_ctrl = CLR;
+          nextState = DATA;
+        end
+
+        else if (sample) begin
+          cPts.clk_ctrl = CLR;
+          cPts.sample_ctrl = INC;
+          nextState = START_BUF;
+        end
+
+        else begin
+          cPts.clk_ctrl = INC;
+          cPts.sample_ctrl = NO;
+          nextState = START_BUF;
+        end
+      end
+
+      DATA: begin
+        rx_valid = 0;
+
+        if (done) begin
+          cPts.bit_ctrl = NO;
+          cPts.data_ctrl = NONE;
+          nextState = STOP;
+        end
+
+        else if (mid_bit) begin
+          cPts.bit_ctrl = INC;
+          cPts.data_ctrl = SHIFT;
+          nextState = DATA;
+        end
+
+        else begin
+          cPts.bit_ctrl = NO;
+          cPts.data_ctrl = NONE;
+          nextState = DATA;
+        end
+      end
+
+      STOP: begin
+        receiving = 1;
+        if (mid_bit) begin
+          if (rx == 1'b1) begin
+            rx_valid = 1;
+            nextState = IDLE;
+          end
+          else begin
+            rx_valid = 0;
+            nextState = IDLE;
+          end
+        end
+        else begin
+          rx_valid = 0;
+          nextState = STOP;
+        end
+      end
+    endcase
   end
 
-  // FSM for 
 
+  always_ff @(posedge clock, posedge reset)
+    if (reset) 
+      state <= IDLE;
+    else 
+      state <= nextState;
 
-//   always_ff @(posedge clock, posedge reset)
 endmodule: rx_fsm
