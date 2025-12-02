@@ -26,7 +26,7 @@ module uart_rx #(
   // Oversampling ---
   logic [$clog2(CLKS_PER_SAMPLE)-1:0] clk_count;
   logic [$clog2(OVERSAMPLE)-1:0] sample_count;
-  logic sample, mid_bit;
+  logic sample, mid_bit, full_bit, done;
 
   // Data ---
   logic [$clog2(DATA_WIDTH)-1:0] bit_count;
@@ -43,6 +43,11 @@ module uart_rx #(
   (
     .data_in(rx),
     .data_out(rx_data),
+    .*
+  );
+
+  rx_fsm fsm
+  (
     .*
   );
 
