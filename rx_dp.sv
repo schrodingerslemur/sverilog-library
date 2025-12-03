@@ -81,13 +81,13 @@ module rx_datapath #(
       (clk_count == CLK_CNT_W'((CLKS_PER_SAMPLE - 1)));
 
   assign mid_bit =
-      (sample_count == SAMPLE_CNT_W'((OVERSAMPLE/2) - 1));
+      (sample_count == SAMPLE_CNT_W'((OVERSAMPLE/2)));
   
   assign full_bit =
-      (sample_count == SAMPLE_CNT_W'(OVERSAMPLE - 1));
+      (sample_count == SAMPLE_CNT_W'(OVERSAMPLE-1));
 
   assign done =
-      (bit_count == $clog2(DATA_WIDTH)'(DATA_WIDTH - 1));
+      (bit_count == $clog2(DATA_WIDTH)'(DATA_WIDTH-1));
 
 
 endmodule: rx_datapath
