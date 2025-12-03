@@ -12,7 +12,7 @@ module rx_test();
   logic       tx;
 
   // Instantiate UART DUT
-  uart DUT (
+  uart_rx DUT (
     .clock     (clock),
     .rst       (rst),
     .tx_data   (tx_data),
