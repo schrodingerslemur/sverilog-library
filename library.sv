@@ -230,15 +230,15 @@ module Synchronizer
 
   logic metastable;
 
-  DFlipFlop one(.D(async),
-                .Q(metastable),
+  DFlipFlop one(.d(async),
+                .q(metastable),
                 .clock,
                 .preset_L(1'b1),
                 .reset_L(1'b1)
                );
 
-  DFlipFlop two(.D(metastable),
-                .Q(sync),
+  DFlipFlop two(.d(metastable),
+                .q(sync),
                 .clock,
                 .preset_L(1'b1),
                 .reset_L(1'b1)
