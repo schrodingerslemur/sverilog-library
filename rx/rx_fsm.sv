@@ -39,7 +39,7 @@ module rx_fsm (
           if (rx == 0) begin
             cPts.clk_ctrl = CLR;
             cPts.sample_ctrl = CLR;
-            nextState = DATA;
+            nextState = START_BUF;
           end
           else begin
             cPts.clk_ctrl = CLR;
