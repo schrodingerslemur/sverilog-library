@@ -248,7 +248,7 @@ endmodule : Synchronizer
 
 // A BusDriver connects registers to a shared bus (usually data bus)
 module BusDriver
-  #(parameter WIDTH)
+  #(parameter WIDTH=8)
   (input  logic             en,
    input  logic [WIDTH-1:0] data,
    output logic [WIDTH-1:0] buff,
