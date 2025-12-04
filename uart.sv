@@ -1,0 +1,25 @@
+module uart #(
+    parameter BAUD_RATE   = 9600,
+    parameter CLOCK_FREQ  = 50000000,
+    parameter DATA_BITS   = 8,
+)
+  ( input  logic        clock,
+    input  logic        rst,
+
+    // TX user interface
+    input  logic [7:0]  tx_data,
+    input  logic        tx_send,
+    output logic        tx_busy,
+
+    // RX user interface
+    output logic [7:0]  rx_data,
+    output logic        rx_valid,
+
+    // UART physical pins
+    input  logic        rx,     // UART RX pin
+    output logic        tx      // UART TX pin
+);
+  // 8 data bits, no parity, 1 stop bit
+
+endmodule: uart
+
