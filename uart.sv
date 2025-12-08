@@ -1,10 +1,10 @@
 module uart #(
     parameter BAUD_RATE   = 9600,
     parameter CLOCK_FREQ  = 50000000,
-    parameter DATA_BITS   = 8,
+    parameter DATA_BITS   = 8
 )
-  ( input  logic        clock,
-    input  logic        rst,
+(   input  logic        clock,
+    input  logic        reset,
 
     // TX user interface
     input  logic [DATA_BITS-1:0]  tx_data,
