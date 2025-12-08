@@ -36,6 +36,7 @@ module uart_tx #(
     // Output and next state logic
     always_ff @(posedge clock, posedge reset) begin
         if (reset) begin
+            tx_busy <= 0;
             state <= IDLE;
         end
         else begin
@@ -86,6 +87,7 @@ module uart_tx #(
                 end
 
                 STOP: begin
+                    tx_busy <= 1;
                     if (FULL_BIT) begin
                         tx <= 1;
                         state <= IDLE;
