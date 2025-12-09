@@ -33,13 +33,11 @@ module rx_test();
   // Generate 100 Hz clock → period = 10 ms → half-period = 5 ms
   initial begin
     clock = 0;
-    forever #5 clock = ~clock; // 5 time units = half-period
+    forever #5 clock = ~clock;
   end
 
-  // Bit time in clock cycles
   localparam integer BIT_TIME_CLKS = 50; // 500 ms / 10 ms per clock = 50 clocks per UART bit
 
-  // UART sender task using clock cycles (clock-driven)
   task send_uart_byte(input [7:0] b);
     integer i, j;
     begin
@@ -73,8 +71,7 @@ module rx_test();
     // Send bytes
     send_uart_byte(8'hA5); // 10100101
     send_uart_byte(8'h3C); // 00111100
-
-    // Finish simulation
+    
     #1000;
     $finish;
   end

@@ -19,7 +19,6 @@ module uart #(
     input  logic        rx,     // UART RX pin
     output logic        tx      // UART TX pin
 );
-  // 8 data bits, no parity, 1 stop bit
 
   uart_rx #(
     .BAUD_RATE   (BAUD_RATE),

@@ -112,8 +112,3 @@ module uart_tx #(
 
 
 endmodule: uart_tx
-
-// 0x55 = 01010101
-// 0x2a = 00101010
-// 0xaa = 10101010
-// 0xab = 10101011
