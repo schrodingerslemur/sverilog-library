@@ -1,4 +1,4 @@
-module uart_full_tb;
+module uart_test;
 
   // Parameters
   localparam CLOCK_FREQ = 50_000_000;
@@ -38,16 +38,12 @@ module uart_full_tb;
     .tx       (tx)
   );
 
-  // Clock generation
   initial begin
-    $monitor("rx_valid=%b rx_data=0x%0h", rx_valid, rx_data);
-    // $monitor("Time: %0t | reset=%b | tx_send=%b | tx_busy=%b | rx_valid=%b | tx_data=0x%0h | rx_data=0x%0h | tx_state=%s | rx_state=%s", 
-            //   $time, reset, tx_send, tx_busy,  rx_valid, tx_data, rx_data, dut.tx_inst.state.name() , dut.rx_inst.state.name() );
     clock = 0;
     forever #(CLK_PERIOD/2) clock = ~clock;
   end
 
-  // Task to send a byte and verify loopback
+  // Send byte and verify loop
   task send_and_check(input [7:0] b);
     begin
       @(posedge clock);
@@ -65,10 +61,6 @@ module uart_full_tb;
       wait (rx_valid == 1);
       $display("TX busy...");
       wait (!tx_busy);
-
-
-
-
       $display("Received byte: 0x%0h", rx_data);
 
       if (rx_data == b)
@@ -90,8 +82,12 @@ module uart_full_tb;
     #200;
     reset = 0;
 
-    // Send a set of bytes
     send_and_check(8'h55);
+    send_and_check(8'hAA);
+    send_and_check(8'hFF);
+    send_and_check(8'h00);
+    send_and_check(8'h3C);
+    send_and_check(8'hA5);
 
     $display("=== UART Full Loopback Test Complete ===");
     #10000;
